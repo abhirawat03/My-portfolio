@@ -199,7 +199,11 @@ Subject: ${formState.subject || 'No Subject'}
 ${formState.message}`
     );
 
-    window.location.href = `mailto:abhirawat8076@gmail.com?subject=${subject}&body=${body}`;
+    // Opens Gmail compose in browser
+    window.open(
+      `https://mail.google.com/mail/?view=cm&fs=1&to=abhirawat8076@gmail.com&su=${subject}&body=${body}`,
+      '_blank'
+    );
 
     setFormStatus('success');
     setFormState({ name: '', email: '', subject: '', message: '' });
