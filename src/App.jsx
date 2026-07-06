@@ -18,7 +18,9 @@ import {
   Code,
   Layers,
   Sparkles,
-  FileText
+  FileText,
+  Menu,
+  X
 } from 'lucide-react'
 
 // Custom SVGs for Brand Icons since Lucide-React deprecated them
@@ -64,6 +66,7 @@ function App() {
   // Navigation active state
   const [activeSection, setActiveSection] = useState('home');
   const [navScrolled, setNavScrolled] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Terminal simulated typing state
   const [terminalTab, setTerminalTab] = useState('profile');
@@ -282,12 +285,44 @@ function App() {
 
           <a 
             href="#contact" 
-            className="btn btn-secondary" 
+            className="btn btn-secondary hire-me-btn" 
             style={{ padding: '0.5rem 1rem', fontSize: '0.85rem' }}
           >
             Hire Me
           </a>
+
+          <button 
+            className="mobile-menu-btn"
+            onClick={() => setMobileMenuOpen(prev => !prev)}
+            aria-label="Toggle mobile menu"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
         </div>
+
+        {/* Mobile Menu Dropdown */}
+        {mobileMenuOpen && (
+          <div className="mobile-menu-overlay">
+            {['home','about','skills','projects','experience','contact'].map(section => (
+              <a
+                key={section}
+                href={`#${section}`}
+                className={`mobile-nav-link ${activeSection === section ? 'active' : ''}`}
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {section.charAt(0).toUpperCase() + section.slice(1)}
+              </a>
+            ))}
+            <a
+              href="#contact"
+              className="btn btn-primary"
+              style={{ margin: '0.5rem 1.5rem 1rem', justifyContent: 'center' }}
+              onClick={() => setMobileMenuOpen(false)}
+            >
+              Hire Me
+            </a>
+          </div>
+        )}
       </nav>
 
       {/* Main Content */}
