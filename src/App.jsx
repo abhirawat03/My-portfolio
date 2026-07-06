@@ -184,10 +184,10 @@ function App() {
     return () => observer.disconnect();
   }, []);
 
-  // ── EmailJS credentials loaded from .env ──
-  const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-  const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
-  const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+  // ── EmailJS credentials ──
+  const EMAILJS_SERVICE_ID  = 'service_pf9ovlk';
+  const EMAILJS_TEMPLATE_ID = 'template_ttkqfw7';
+  const EMAILJS_PUBLIC_KEY  = 'v-AilWKp4hFNHkyxz';
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
