@@ -190,13 +190,25 @@ function App() {
       return;
     }
 
-    const subject = encodeURIComponent(formState.subject || 'Portfolio Contact');
+    const subject = encodeURIComponent(`[Portfolio] ${formState.subject || 'New Message'} — from ${formState.name}`);
     const body = encodeURIComponent(
-`Name: ${formState.name}
-Email: ${formState.email}
-Subject: ${formState.subject || 'No Subject'}
+`━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  📬  NEW PORTFOLIO MESSAGE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-${formState.message}`
+👤  SENDER DETAILS
+────────────────────────────────
+  Name    →  ${formState.name}
+  Email   →  ${formState.email}
+  Subject →  ${formState.subject || 'No Subject'}
+
+💬  MESSAGE
+────────────────────────────────
+${formState.message}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  Sent via abhishek-rawat Portfolio
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━`
     );
 
     // Opens Gmail compose in browser
