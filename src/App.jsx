@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import emailjs from '@emailjs/browser'
 import { 
   Terminal as TerminalIcon, 
   Database, 
@@ -184,47 +183,26 @@ function App() {
     return () => observer.disconnect();
   }, []);
 
-  // ── EmailJS credentials ──
-  const EMAILJS_SERVICE_ID  = 'service_pf9ovlk';
-  const EMAILJS_TEMPLATE_ID = 'template_ttkqfw7';
-  const EMAILJS_PUBLIC_KEY  = 'v-AilWKp4hFNHkyxz';
-
-  const handleContactSubmit = async (e) => {
+  const handleContactSubmit = (e) => {
     e.preventDefault();
     if (!formState.name || !formState.email || !formState.message) {
       setFormStatus('error');
       return;
     }
-    setFormStatus('sending');
 
-    const templateParams = {
-      name:    formState.name,
-      email:   formState.email,
-      subject: formState.subject || 'No Subject',
-      message: formState.message,
-      time:    new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
-    };
+    const subject = encodeURIComponent(formState.subject || 'Portfolio Contact');
+    const body = encodeURIComponent(
+`Name: ${formState.name}
+Email: ${formState.email}
+Subject: ${formState.subject || 'No Subject'}
 
-    try {
-      // Primary: EmailJS
-      await emailjs.send(
-        EMAILJS_SERVICE_ID,
-        EMAILJS_TEMPLATE_ID,
-        templateParams,
-        EMAILJS_PUBLIC_KEY
-      );
-      setFormStatus('success');
-      setFormState({ name: '', email: '', subject: '', message: '' });
+${formState.message}`
+    );
 
-    } catch (error) {
-      console.warn('EmailJS failed, opening mailto fallback...', error);
+    window.location.href = `mailto:abhirawat8076@gmail.com?subject=${subject}&body=${body}`;
 
-      // Fallback: mailto link
-      const mailtoBody = `Name: ${formState.name}%0AEmail: ${formState.email}%0ASubject: ${formState.subject}%0A%0A${formState.message}`;
-      window.location.href = `mailto:abhirawat8076@gmail.com?subject=${encodeURIComponent(formState.subject || 'Portfolio Contact')}&body=${mailtoBody}`;
-
-      setFormStatus('fallback');
-    }
+    setFormStatus('success');
+    setFormState({ name: '', email: '', subject: '', message: '' });
   };
 
   const projects = [
