@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import emailjs from '@emailjs/browser'
 import { 
   Terminal as TerminalIcon, 
   Database, 
@@ -180,19 +181,47 @@ function App() {
     return () => observer.disconnect();
   }, []);
 
-  const handleContactSubmit = (e) => {
+  // ── EmailJS credentials loaded from .env ──
+  const EMAILJS_SERVICE_ID  = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+  const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+  const EMAILJS_PUBLIC_KEY  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
+
+  const handleContactSubmit = async (e) => {
     e.preventDefault();
     if (!formState.name || !formState.email || !formState.message) {
       setFormStatus('error');
       return;
     }
     setFormStatus('sending');
-    
-    // Simulate API call
-    setTimeout(() => {
+
+    const templateParams = {
+      name:    formState.name,
+      email:   formState.email,
+      subject: formState.subject || 'No Subject',
+      message: formState.message,
+      time:    new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata' }),
+    };
+
+    try {
+      // Primary: EmailJS
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        templateParams,
+        EMAILJS_PUBLIC_KEY
+      );
       setFormStatus('success');
       setFormState({ name: '', email: '', subject: '', message: '' });
-    }, 1500);
+
+    } catch (error) {
+      console.warn('EmailJS failed, opening mailto fallback...', error);
+
+      // Fallback: mailto link
+      const mailtoBody = `Name: ${formState.name}%0AEmail: ${formState.email}%0ASubject: ${formState.subject}%0A%0A${formState.message}`;
+      window.location.href = `mailto:abhirawat8076@gmail.com?subject=${encodeURIComponent(formState.subject || 'Portfolio Contact')}&body=${mailtoBody}`;
+
+      setFormStatus('fallback');
+    }
   };
 
   const projects = [
@@ -919,7 +948,12 @@ function App() {
 
                 {formStatus === 'success' && (
                   <div className="form-status success">
-                    Thank you! Your simulated message has been sent successfully. I will get back to you soon.
+                    ✅ Message sent! I'll get back to you soon.
+                  </div>
+                )}
+                {formStatus === 'fallback' && (
+                  <div className="form-status success">
+                    📧 Your email app opened as a backup — please hit send there!
                   </div>
                 )}
                 {formStatus === 'error' && (
