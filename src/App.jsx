@@ -77,14 +77,6 @@ function App() {
   const [formState, setFormState] = useState({ name: '', email: '', subject: '', message: '' });
   const [formStatus, setFormStatus] = useState(null); // 'sending', 'success', 'error'
 
-  // API Sandbox State
-  const [apiMethod, setApiMethod] = useState('GET');
-  const [apiEndpoint, setApiEndpoint] = useState('/api/v1/profile');
-  const [apiStatus, setApiStatus] = useState(null); // null, 'sending', '200 OK', '201 Created'
-  const [apiResponse, setApiResponse] = useState(null);
-  const [apiTime, setApiTime] = useState(null);
-  const [apiAuthToken, setApiAuthToken] = useState('rawat_dev_bearer_token_secret_xyz123');
-
   // Typewriter effect variables
   const roles = ["Backend Engineer", "Full-Stack Developer", "Software Engineer"];
   const [roleIndex, setRoleIndex] = useState(0);
@@ -134,7 +126,7 @@ function App() {
       }
 
       // Scroll Spy for active nav highlight
-      const sections = ['home', 'about', 'skills', 'projects', 'experience', 'contact', 'api-sandbox'];
+      const sections = ['home', 'about', 'skills', 'projects', 'experience', 'contact'];
       const scrollPosition = window.scrollY + 200;
 
       for (const section of sections) {
@@ -190,101 +182,6 @@ function App() {
     elements.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
-
-  // API Sandbox Endpoint Responses
-  const apiEndpointsData = {
-    'GET /api/v1/profile': {
-      status: '200 OK',
-      body: {
-        status: 'success',
-        data: {
-          name: 'Abhishek Rawat',
-          role: 'Backend & Full-Stack Developer',
-          location: 'South Delhi, Delhi, India',
-          education: 'B.Tech in CSE (Tula\'s Institute, 2025)',
-          dsa_language: 'C++',
-          hobbies: ['API Design', 'Distributed Systems', 'Caching Layers']
-        }
-      }
-    },
-    'GET /api/v1/skills': {
-      status: '200 OK',
-      body: {
-        status: 'success',
-        skills: {
-          languages: ['C++', 'JavaScript', 'Python', 'SQL'],
-          backend: ['Node.js', 'Express.js', 'FastAPI'],
-          databases: ['MongoDB', 'Redis', 'MySQL'],
-          realtime: ['Socket.IO WebSockets'],
-          auth: ['JWT', 'OAuth 2.0']
-        }
-      }
-    },
-    'GET /api/v1/projects': {
-      status: '200 OK',
-      body: {
-        status: 'success',
-        count: 2,
-        projects: [
-          {
-            name: 'Rynqor',
-            type: 'Real-time Chat Platform',
-            stack: ['React', 'Node.js', 'Redis', 'Socket.IO', 'MongoDB'],
-            scale: 'Horizontal scaling using Redis adapter for WebSockets'
-          },
-          {
-            name: 'Cutbit',
-            type: 'Link Tracker & Analytics Engine',
-            stack: ['React', 'Node.js', 'Express', 'MongoDB'],
-            metrics: 'Unique visitor deduplication & daily aggregations'
-          }
-        ]
-      }
-    },
-    'POST /api/v1/message': {
-      status: '201 Created',
-      body: (formData) => ({
-        status: 'created',
-        message: 'System packet successfully created & delivered to inbox!',
-        payload_received: {
-          sender_name: formData.name || 'Anonymous Sender',
-          sender_email: formData.email || 'no-email@provided.com',
-          message_length: (formData.message || '').length,
-          delivered_at: new Date().toISOString()
-        }
-      })
-    }
-  };
-
-  const handleSendApiRequest = () => {
-    setApiStatus('sending');
-    const start = performance.now();
-    
-    setTimeout(() => {
-      const key = `${apiMethod} ${apiEndpoint}`;
-      const config = apiEndpointsData[key];
-      const end = performance.now();
-      
-      setApiTime(`${Math.round(end - start)}ms`);
-      
-      if (key === 'POST /api/v1/message') {
-        setApiStatus(config.status);
-        setApiResponse(config.body(formState));
-        // Trigger mailto popup automatically as well!
-        if (formState.name && formState.email && formState.message) {
-          const subject = encodeURIComponent(`[API Sandbox] Message from ${formState.name}`);
-          const mailtoBody = encodeURIComponent(`Name: ${formState.name}\nEmail: ${formState.email}\nMessage: ${formState.message}`);
-          window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=abhirawat8076@gmail.com&su=${subject}&body=${mailtoBody}`, '_blank');
-        }
-      } else if (config) {
-        setApiStatus(config.status);
-        setApiResponse(config.body);
-      } else {
-        setApiStatus('404 Not Found');
-        setApiResponse({ error: 'Endpoint not found', path: apiEndpoint });
-      }
-    }, 800);
-  };
 
 
 
@@ -378,7 +275,6 @@ ${formState.message}
             <li><a href="#about" className={`nav-link ${activeSection === 'about' ? 'active' : ''}`}>About</a></li>
             <li><a href="#skills" className={`nav-link ${activeSection === 'skills' ? 'active' : ''}`}>Skills</a></li>
             <li><a href="#projects" className={`nav-link ${activeSection === 'projects' ? 'active' : ''}`}>Projects</a></li>
-            <li><a href="#api-sandbox" className={`nav-link ${activeSection === 'api-sandbox' ? 'active' : ''}`}>Sandbox</a></li>
             <li><a href="#experience" className={`nav-link ${activeSection === 'experience' ? 'active' : ''}`}>Experience</a></li>
             <li><a href="#contact" className={`nav-link ${activeSection === 'contact' ? 'active' : ''}`}>Contact</a></li>
           </ul>
@@ -403,14 +299,14 @@ ${formState.message}
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
           <div className="mobile-menu-overlay">
-            {['home','about','skills','projects','api-sandbox','experience','contact'].map(section => (
+            {['home','about','skills','projects','experience','contact'].map(section => (
               <a
                 key={section}
                 href={`#${section}`}
                 className={`mobile-nav-link ${activeSection === section ? 'active' : ''}`}
                 onClick={() => setMobileMenuOpen(false)}
               >
-                {section === 'api-sandbox' ? 'Sandbox' : section.charAt(0).toUpperCase() + section.slice(1)}
+                {section.charAt(0).toUpperCase() + section.slice(1)}
               </a>
             ))}
             <a
@@ -562,150 +458,6 @@ ${formState.message}
                   </div>
                 </>
               )}
-            </div>
-          </div>
-        </section>
-
-        {/* API SANDBOX SECTION */}
-        <section id="api-sandbox" className="animate-on-scroll">
-          <div className="section-title-wrapper" style={{ marginBottom: '3rem' }}>
-            <h2 className="section-title">Interactive API Playground</h2>
-            <p className="section-subtitle">Real-time mock API console. Click endpoints to query my portfolio data.</p>
-          </div>
-
-          <div className="api-sandbox-container">
-            {/* Left side: Navigation / Endpoint selection */}
-            <div className="api-sidebar">
-              <div className="api-section-header">Endpoints</div>
-              
-              {[
-                { method: 'GET', path: '/api/v1/profile' },
-                { method: 'GET', path: '/api/v1/skills' },
-                { method: 'GET', path: '/api/v1/projects' },
-                { method: 'POST', path: '/api/v1/message', info: 'Linked to Contact Form values!' }
-              ].map((ep) => (
-                <button
-                  key={ep.path}
-                  className={`api-endpoint-btn ${apiMethod === ep.method && apiEndpoint === ep.path ? 'active' : ''}`}
-                  onClick={() => {
-                    setApiMethod(ep.method);
-                    setApiEndpoint(ep.path);
-                    setApiStatus(null);
-                    setApiResponse(null);
-                  }}
-                >
-                  <span className={`method-badge ${ep.method.toLowerCase()}`}>{ep.method}</span>
-                  <span className="endpoint-path">{ep.path}</span>
-                  {ep.info && <span className="endpoint-info-dot" title={ep.info}>⚡</span>}
-                </button>
-              ))}
-
-              <div className="api-section-header" style={{ marginTop: '1.5rem' }}>Headers</div>
-              <div className="api-headers-view">
-                <div className="header-row">
-                  <span className="header-key">Authorization:</span>
-                  <span className="header-val">Bearer {apiAuthToken.slice(0, 12)}...</span>
-                </div>
-                <div className="header-row">
-                  <span className="header-key">Content-Type:</span>
-                  <span className="header-val">application/json</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Right side: Client Request Panel & JSON Output */}
-            <div className="api-main-panel">
-              {/* Request bar */}
-              <div className="api-request-bar">
-                <div className="api-input-container">
-                  <span className={`method-label ${apiMethod.toLowerCase()}`}>{apiMethod}</span>
-                  <input
-                    type="text"
-                    className="api-url-input"
-                    value={`https://api.abhishekrawat.dev${apiEndpoint}`}
-                    readOnly
-                  />
-                </div>
-                <button 
-                  className="btn btn-primary api-send-btn"
-                  onClick={handleSendApiRequest}
-                  disabled={apiStatus === 'sending'}
-                >
-                  {apiStatus === 'sending' ? 'Sending...' : 'Send'}
-                </button>
-              </div>
-
-              {/* Payload form (only displayed for POST /message) */}
-              {apiEndpoint === '/api/v1/message' && (
-                <div className="api-payload-panel">
-                  <div className="payload-header">JSON Request Body (Fill to POST)</div>
-                  <div className="payload-fields-grid">
-                    <div className="payload-field-group">
-                      <label>name</label>
-                      <input
-                        type="text"
-                        placeholder="Your Name"
-                        value={formState.name}
-                        onChange={(e) => setFormState({ ...formState, name: e.target.value })}
-                      />
-                    </div>
-                    <div className="payload-field-group">
-                      <label>email</label>
-                      <input
-                        type="email"
-                        placeholder="your.email@example.com"
-                        value={formState.email}
-                        onChange={(e) => setFormState({ ...formState, email: e.target.value })}
-                      />
-                    </div>
-                    <div className="payload-field-group" style={{ gridColumn: 'span 2' }}>
-                      <label>message</label>
-                      <input
-                        type="text"
-                        placeholder="Tell me about your system requirements..."
-                        value={formState.message}
-                        onChange={(e) => setFormState({ ...formState, message: e.target.value })}
-                      />
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Response output */}
-              <div className="api-response-panel">
-                <div className="response-header">
-                  <span>Response</span>
-                  {apiStatus && (
-                    <div className="response-meta">
-                      <span className={`status-badge ${apiStatus === '200 OK' || apiStatus === '201 Created' ? 'success' : ''}`}>
-                        {apiStatus}
-                      </span>
-                      {apiTime && <span className="time-badge">⏱️ {apiTime}</span>}
-                    </div>
-                  )}
-                </div>
-
-                <div className="response-body">
-                  {apiStatus === 'sending' && (
-                    <div className="api-loading">
-                      <div className="api-spinner"></div>
-                      <span>Dispatching system packets...</span>
-                    </div>
-                  )}
-                  
-                  {apiStatus !== 'sending' && !apiResponse && (
-                    <div className="api-placeholder">
-                      Click "Send" to fire the HTTP Request and inspect response payloads.
-                    </div>
-                  )}
-
-                  {apiStatus !== 'sending' && apiResponse && (
-                    <pre className="json-output">
-                      {JSON.stringify(apiResponse, null, 2)}
-                    </pre>
-                  )}
-                </div>
-              </div>
             </div>
           </div>
         </section>
