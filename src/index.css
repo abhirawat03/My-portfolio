@@ -331,6 +331,8 @@ section {
   line-height: 1.5;
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .terminal-body::-webkit-scrollbar {
