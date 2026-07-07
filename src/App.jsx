@@ -472,7 +472,7 @@ ${formState.message}
               {[
                 { key: 'profile', icon: <TerminalIcon size={12}/>, label: 'profile.json', activeColor: 'var(--color-primary)' },
                 { key: 'skills',  icon: <Cpu size={12}/>,          label: 'backend.sh',   activeColor: 'var(--color-accent-cyan)' },
-                { key: 'cli',     icon: <Code size={12}/>,         label: '> cli',        activeColor: 'var(--color-accent-emerald)' },
+                { key: 'cli',     icon: <Code size={12}/>,         label: 'terminal.sh',  activeColor: 'var(--color-accent-emerald)' },
               ].map(tab => (
                 <button
                   key={tab.key}
