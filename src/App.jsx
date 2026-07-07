@@ -77,6 +77,7 @@ function App() {
     { type: 'system', content: '  Type "help" to see available commands.' },
   ]);
   const cliEndRef = useRef(null);
+  const terminalBodyRef = useRef(null);
 
   // Project filtering state
   const [projectFilter, setProjectFilter] = useState('all');
@@ -191,10 +192,19 @@ function App() {
     return () => observer.disconnect();
   }, []);
 
-  // Auto-scroll CLI to bottom
+  // Auto-scroll CLI to bottom without scrolling the main window
   useEffect(() => {
     if (terminalTab === 'cli') {
-      cliEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+      const body = terminalBodyRef.current;
+      if (body) {
+        // Scroll the terminal-body container
+        body.scrollTop = body.scrollHeight;
+        // Also scroll the inner cli-body if nested
+        const cliBody = body.querySelector('.cli-body');
+        if (cliBody) {
+          cliBody.scrollTop = cliBody.scrollHeight;
+        }
+      }
     }
   }, [cliHistory, terminalTab]);
 
@@ -487,7 +497,7 @@ ${formState.message}
               ))}
             </div>
 
-            <div className="terminal-body">
+            <div className="terminal-body" ref={terminalBodyRef}>
               {terminalTab === 'profile' && (
                 <>
                   <div className="terminal-line">
