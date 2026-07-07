@@ -420,7 +420,7 @@ ${formState.message}
                   <div className="terminal-line">
                     <span className="terminal-prompt">$</span> <span className="terminal-command">cat profile.json</span>
                   </div>
-                  <div className="terminal-output" style={{ whiteSpace: 'pre', color: '#8b949e' }}>
+                  <div className="terminal-output" style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', color: '#8b949e' }}>
 {`{
   "name": "Abhishek Rawat",
   "title": "Backend & Fullstack Developer",
