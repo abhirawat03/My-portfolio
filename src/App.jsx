@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { 
   Terminal as TerminalIcon, 
   Database, 
@@ -69,15 +69,6 @@ function App() {
 
   // Terminal tabs
   const [terminalTab, setTerminalTab] = useState('profile');
-
-  // Interactive CLI state
-  const [cliInput, setCliInput] = useState('');
-  const [cliHistory, setCliHistory] = useState([
-    { type: 'system', content: '▶ abhishek-rawat CLI v1.0.0 — ready.' },
-    { type: 'system', content: '  Type "help" to see available commands.' },
-  ]);
-  const cliEndRef = useRef(null);
-  const terminalBodyRef = useRef(null);
 
   // Project filtering state
   const [projectFilter, setProjectFilter] = useState('all');
@@ -192,91 +183,7 @@ function App() {
     return () => observer.disconnect();
   }, []);
 
-  // Auto-scroll CLI to bottom without scrolling the main window
-  useEffect(() => {
-    if (terminalTab === 'cli') {
-      const body = terminalBodyRef.current;
-      if (body) {
-        // Scroll the terminal-body container
-        body.scrollTop = body.scrollHeight;
-        // Also scroll the inner cli-body if nested
-        const cliBody = body.querySelector('.cli-body');
-        if (cliBody) {
-          cliBody.scrollTop = cliBody.scrollHeight;
-        }
-      }
-    }
-  }, [cliHistory, terminalTab]);
 
-  // CLI commands registry
-  const cliCommands = {
-    help: [
-      { text: 'Available commands:', color: 'var(--color-primary)' },
-      { text: '  whoami      → About me', color: '#8b949e' },
-      { text: '  skills      → Tech stack & proficiency', color: '#8b949e' },
-      { text: '  projects    → My featured projects', color: '#8b949e' },
-      { text: '  experience  → Work history', color: '#8b949e' },
-      { text: '  contact     → Get in touch', color: '#8b949e' },
-      { text: '  clear       → Clear terminal', color: '#8b949e' },
-    ],
-    whoami: [
-      { text: '  Abhishek Rawat', color: 'var(--color-primary)' },
-      { text: '  Backend & Full-Stack Developer', color: 'var(--color-accent-cyan)' },
-      { text: '  📍 South Delhi, Delhi', color: '#8b949e' },
-      { text: '  🎓 B.Tech CSE — Tula\'s Institute (2025)', color: '#8b949e' },
-      { text: '  🎯 Focus: Scalability · Performance · APIs', color: '#8b949e' },
-    ],
-    skills: [
-      { text: '  [Backend]   Node.js · Express · FastAPI · Python', color: 'var(--color-accent-cyan)' },
-      { text: '  [Database]  MongoDB · Redis · MySQL', color: 'var(--color-accent-purple)' },
-      { text: '  [Realtime]  Socket.IO · WebSockets · JWT/OAuth', color: 'var(--color-accent-emerald)' },
-      { text: '  [Frontend]  React · React Query · TailwindCSS', color: 'var(--color-primary)' },
-      { text: '  [Tools]     Git · Postman · C++ DSA', color: '#f59e0b' },
-    ],
-    projects: [
-      { text: '  → Rynqor   Real-time MERN Chat Platform', color: 'var(--color-accent-purple)' },
-      { text: '    Stack: React · Node · Redis · Socket.IO · MongoDB', color: '#8b949e' },
-      { text: '    Features: WebSockets · JWT · Optimistic UI · Caching', color: '#8b949e' },
-      { text: '', color: '' },
-      { text: '  → Cutbit   Link Tracking & Analytics Engine', color: 'var(--color-accent-cyan)' },
-      { text: '    Stack: React · Node · MongoDB · Google OAuth', color: '#8b949e' },
-      { text: '    Features: GeoIP · Bot Filter · In-memory Cache', color: '#8b949e' },
-    ],
-    experience: [
-      { text: '  OctaNet Software Solution Pvt. Ltd.', color: 'var(--color-primary)' },
-      { text: '  Web Development Intern | Jul 2023 – Aug 2023', color: '#8b949e' },
-      { text: '  → Built responsive HTML/CSS/JS interfaces', color: '#8b949e' },
-      { text: '  → Developed task management app w/ localStorage', color: '#8b949e' },
-      { text: '  → Engineered reusable React components', color: '#8b949e' },
-    ],
-    contact: [
-      { text: '  📧  abhirawat8076@gmail.com', color: 'var(--color-accent-cyan)' },
-      { text: '  📞  +91-9625690703', color: 'var(--color-accent-emerald)' },
-      { text: '  🐙  github.com/abhirawat03', color: 'var(--color-primary)' },
-      { text: '  💼  linkedin.com/in/abhishekrawat', color: 'var(--color-accent-purple)' },
-    ],
-  };
-
-  const handleCliCommand = (cmd) => {
-    const trimmed = cmd.trim().toLowerCase();
-    if (trimmed === 'clear') {
-      setCliHistory([{ type: 'system', content: '  Terminal cleared. Type "help" for commands.' }]);
-      return;
-    }
-    const inputEntry = { type: 'input', content: cmd };
-    if (trimmed === '') {
-      setCliHistory(prev => [...prev, inputEntry]);
-      return;
-    }
-    if (cliCommands[trimmed]) {
-      setCliHistory(prev => [...prev, inputEntry, { type: 'output', lines: cliCommands[trimmed] }]);
-    } else {
-      setCliHistory(prev => [...prev, inputEntry, {
-        type: 'error',
-        content: `  command not found: ${trimmed}. Try "help".`
-      }]);
-    }
-  };
 
   const handleContactSubmit = (e) => {
     e.preventDefault();
@@ -469,36 +376,46 @@ ${formState.message}
             </div>
             
             <div style={{ display: 'flex', background: '#08090d', borderBottom: '1px solid var(--border-color)' }}>
-              {[
-                { key: 'profile', icon: <TerminalIcon size={12}/>, label: 'profile.json', activeColor: 'var(--color-primary)' },
-                { key: 'skills',  icon: <Cpu size={12}/>,          label: 'backend.sh',   activeColor: 'var(--color-accent-cyan)' },
-                { key: 'cli',     icon: <Code size={12}/>,         label: 'terminal.sh',  activeColor: 'var(--color-accent-emerald)' },
-              ].map(tab => (
-                <button
-                  key={tab.key}
-                  onClick={() => setTerminalTab(tab.key)}
-                  style={{
-                    background: terminalTab === tab.key ? '#0b0d13' : 'transparent',
-                    border: 'none',
-                    color: terminalTab === tab.key ? tab.activeColor : 'var(--color-text-secondary)',
-                    padding: '0.5rem 1rem',
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.8rem',
-                    cursor: 'pointer',
-                    borderRight: '1px solid var(--border-color)',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                    transition: 'color 0.2s'
-                  }}
-                >
-                  {tab.icon} {tab.label}
-                </button>
-              ))}
+              <button 
+                onClick={() => setTerminalTab('profile')}
+                style={{
+                  background: terminalTab === 'profile' ? '#0b0d13' : 'transparent',
+                  border: 'none',
+                  color: terminalTab === 'profile' ? 'var(--color-primary)' : 'var(--color-text-secondary)',
+                  padding: '0.5rem 1rem',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  borderRight: '1px solid var(--border-color)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem'
+                }}
+              >
+                <TerminalIcon size={12} /> profile.json
+              </button>
+              <button 
+                onClick={() => setTerminalTab('skills')}
+                style={{
+                  background: terminalTab === 'skills' ? '#0b0d13' : 'transparent',
+                  border: 'none',
+                  color: terminalTab === 'skills' ? 'var(--color-accent-cyan)' : 'var(--color-text-secondary)',
+                  padding: '0.5rem 1rem',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.8rem',
+                  cursor: 'pointer',
+                  borderRight: '1px solid var(--border-color)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.4rem'
+                }}
+              >
+                <Cpu size={12} /> backend.sh
+              </button>
             </div>
 
-            <div className="terminal-body" ref={terminalBodyRef}>
-              {terminalTab === 'profile' && (
+            <div className="terminal-body">
+              {terminalTab === 'profile' ? (
                 <>
                   <div className="terminal-line">
                     <span className="terminal-prompt">$</span> <span className="terminal-command">cat profile.json</span>
@@ -517,74 +434,29 @@ ${formState.message}
                     <span className="terminal-prompt">$</span> <span className="terminal-command">npm run search-jobs</span><span className="terminal-cursor"></span>
                   </div>
                 </>
-              )}
-
-              {terminalTab === 'skills' && (
+              ) : (
                 <>
                   <div className="terminal-line">
                     <span className="terminal-prompt">$</span> <span className="terminal-command">./backend.sh --list-services</span>
                   </div>
-                  <div className="terminal-output green">[✔] Node.js & Express.js Services ... ONLINE</div>
-                  <div className="terminal-output cyan">[✔] Redis Caching Layer (24h cache TTL) ... ACTIVE</div>
-                  <div className="terminal-output purple">[✔] Socket.IO Message Broker (WS Adapter) ... ACTIVE</div>
+                  <div className="terminal-output green">
+                    [✔] Node.js & Express.js Services ... ONLINE
+                  </div>
+                  <div className="terminal-output cyan">
+                    [✔] Redis Caching Layer (24h cache TTL) ... ACTIVE
+                  </div>
+                  <div className="terminal-output purple">
+                    [✔] Socket.IO Message Broker (WS Adapter) ... ACTIVE
+                  </div>
                   <div className="terminal-output" style={{ color: '#e2e8f0', marginTop: '0.5rem' }}>
-                    &gt; Caching strategy load: 1.00 (Success rate: 99.4%)<br />
+                    &gt; Caching strategy load: 1.00 (Success rate: 99.4%)
+                    <br />
                     &gt; Socket presence check: 2 multi-tab synchronization channels synchronized.
                   </div>
                   <div className="terminal-line" style={{ marginTop: '1rem' }}>
                     <span className="terminal-prompt">$</span> <span className="terminal-command">node server.js</span><span className="terminal-cursor"></span>
                   </div>
                 </>
-              )}
-
-              {terminalTab === 'cli' && (
-                <div className="cli-body">
-                  {cliHistory.map((entry, i) => (
-                    <div key={i}>
-                      {entry.type === 'system' && (
-                        <div style={{ color: 'var(--color-accent-emerald)', marginBottom: '0.25rem', fontSize: '0.8rem' }}>{entry.content}</div>
-                      )}
-                      {entry.type === 'input' && (
-                        <div className="terminal-line">
-                          <span className="terminal-prompt">~</span> <span className="terminal-command">{entry.content}</span>
-                        </div>
-                      )}
-                      {entry.type === 'output' && (
-                        <div style={{ marginBottom: '0.5rem' }}>
-                          {entry.lines.map((line, j) => (
-                            <div key={j} style={{ color: line.color || '#8b949e', fontFamily: 'var(--font-mono)', fontSize: '0.82rem', lineHeight: '1.6' }}>
-                              {line.text}
-                            </div>
-                          ))}
-                        </div>
-                      )}
-                      {entry.type === 'error' && (
-                        <div style={{ color: '#f87171', fontSize: '0.82rem', marginBottom: '0.25rem' }}>{entry.content}</div>
-                      )}
-                    </div>
-                  ))}
-                  <div ref={cliEndRef} />
-                  <div className="cli-input-row">
-                    <span className="terminal-prompt">~</span>
-                    <input
-                      className="cli-input"
-                      type="text"
-                      value={cliInput}
-                      onChange={e => setCliInput(e.target.value)}
-                      onKeyDown={e => {
-                        if (e.key === 'Enter') {
-                          handleCliCommand(cliInput);
-                          setCliInput('');
-                        }
-                      }}
-                      placeholder="type a command..."
-                      autoFocus={terminalTab === 'cli'}
-                      spellCheck={false}
-                      autoComplete="off"
-                    />
-                    <span className="terminal-cursor"></span>
-                  </div>
-                </div>
               )}
             </div>
           </div>
