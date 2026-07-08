@@ -212,9 +212,11 @@ section {
   letter-spacing: -0.02em;
 }
 
+/* Vendor-prefixed and standard properties for text gradient clipping */
 .gradient-text {
   background: linear-gradient(135deg, var(--color-text-primary) 30%, var(--color-primary) 70%, var(--color-accent-cyan) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -386,6 +388,7 @@ section {
   display: inline-block;
   background: linear-gradient(135deg, var(--color-text-primary) 60%, var(--color-primary) 100%);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
